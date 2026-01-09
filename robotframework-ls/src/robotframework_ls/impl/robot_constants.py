@@ -101,7 +101,7 @@ STDLIBS = frozenset(
 
 STDLIBS_LOWER = frozenset(x.lower() for x in STDLIBS)
 
-## Token types gotten from: robot.parsing.lexer.tokens.Token
+# Token types gotten from: robot.parsing.lexer.tokens.Token
 
 
 SETTING_HEADER = "SETTING HEADER"
@@ -157,6 +157,9 @@ WHILE = "WHILE"
 RETURN_STATEMENT = "RETURN STATEMENT"
 CONTINUE = "CONTINUE"
 BREAK = "BREAK"
+CONFIG = "CONFIG"
+GROUP = "GROUP"
+VAR = "VAR"
 OPTION = "OPTION"
 
 SEPARATOR = "SEPARATOR"
@@ -223,5 +226,8 @@ CONTROL_TOKENS = frozenset(
         RETURN_STATEMENT,
         CONTINUE,
         BREAK,
+        CONFIG,
+        GROUP,
+        VAR,
     )
 )

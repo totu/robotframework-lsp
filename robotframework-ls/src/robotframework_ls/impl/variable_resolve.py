@@ -21,7 +21,8 @@ def is_number_var(normalized_variable_name):
     try:
         bases = {"0b": 2, "0o": 8, "0x": 16}
         if normalized_variable_name.startswith(tuple(bases)):
-            int(normalized_variable_name[2:], bases[normalized_variable_name[:2]])
+            int(normalized_variable_name[2:],
+                bases[normalized_variable_name[:2]])
             return True
         int(normalized_variable_name)
         return True
@@ -45,7 +46,8 @@ def is_python_eval_var(normalized_variable_name):
     )
 
 
-_separator_chars = [re.escape(c) for c in """./\()"'-:,.;<>~!@#$%^&*|+=[]{}`~?"""]
+_separator_chars = [re.escape(c)
+                    for c in """./\()"'-:,.;<>~!@#$%^&*|+=[]{}`~?"""]
 
 _match_extended = re.compile(
     r"""
@@ -112,6 +114,18 @@ def normalize_variable_name(text: str) -> str:
     """
     base = extract_variable_base(text)
 
+    # RF 7.3: Handle variable types (e.g. ${var: int})
+    # We strip the type to find the variable definition.
+    if ":" in base:
+        # Check if it looks like a type definition (simple heuristic).
+        # We don't want to break existing variables with colons like ${HOST:8080}
+        # if they are defined as such, but prioritising the base variable seems
+        # correct for LSP in 7.3+.
+        # 7.4 adds Secret type which also follows this pattern but can be multiple parts
+        # e.g. ${PASSWORD:Secret:value}
+        parts = base.split(":")
+        return parts[0].lower().replace("_", "").replace(" ", "")
+
     return base.lower().replace("_", "").replace(" ", "")
 
 
@@ -123,7 +137,8 @@ def robot_search_variable(text: str) -> Optional[IRobotVariableMatch]:
     from robot.variables.search import search_variable  # type:ignore
 
     try:
-        variable_match = search_variable(text, identifiers="$@&%", ignore_errors=True)
+        variable_match = search_variable(
+            text, identifiers="$@&%", ignore_errors=True)
         return variable_match
     except:
         pass
@@ -329,7 +344,7 @@ class ResolveVariablesContext:
 
         i = var_name.find("=")
         if i > 0:
-            value_if_not_found = var_name[i + 1 :]
+            value_if_not_found = var_name[i + 1:]
             var_name = var_name[:i]
 
         if self.config is None:
@@ -342,7 +357,8 @@ class ResolveVariablesContext:
                 ),
             )
         else:
-            robot_env_vars = self.config.get_setting(OPTION_ROBOT_PYTHON_ENV, dict, {})
+            robot_env_vars = self.config.get_setting(
+                OPTION_ROBOT_PYTHON_ENV, dict, {})
             value = robot_env_vars.get(var_name, Sentinel.SENTINEL)
             if value is Sentinel.SENTINEL:
                 value = self._resolve_environment_variable(
@@ -401,7 +417,8 @@ class ResolveVariablesContext:
                     unresolved.append(
                         (
                             tok,
-                            f"\nRecursion detected when resolving variable: {tok.value}.",
+                            f"\nRecursion detected when resolving variable: {
+                                tok.value}.",
                         )
                     )
                     return str(tok), tuple(unresolved)
@@ -414,7 +431,8 @@ class ResolveVariablesContext:
                     unresolved.append(
                         (
                             tok,
-                            f"\nUnable to statically resolve variable: {tok.value}.\nPlease set the `{tok.value[2:-1]}` value in `robot.variables`.",
+                            f"\nUnable to statically resolve variable: {tok.value}.\nPlease set the `{
+                                tok.value[2:-1]}` value in `robot.variables`.",
                         )
                     )
                 else:
@@ -435,7 +453,8 @@ class ResolveVariablesContext:
                                     unresolved.append(
                                         (
                                             tok,
-                                            f"\nUnable to statically resolve variable: {tok.value} because dependent variable: {t.value} was not resolved.",
+                                            f"\nUnable to statically resolve variable: {
+                                                tok.value} because dependent variable: {t.value} was not resolved.",
                                         )
                                     )
                                 else:
@@ -446,7 +465,8 @@ class ResolveVariablesContext:
                                     unresolved.append(
                                         (
                                             tok,
-                                            f"\nUnable to statically resolve variable: {tok.value} because dependent variables: {', '.join(lst)} were not resolved.",
+                                            f"\nUnable to statically resolve variable: {
+                                                tok.value} because dependent variables: {', '.join(lst)} were not resolved.",
                                         )
                                     )
                                 break

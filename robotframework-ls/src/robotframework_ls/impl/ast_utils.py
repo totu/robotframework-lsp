@@ -107,7 +107,8 @@ class _PrinterVisitor(ast_module.NodeVisitor):
                         % (
                             indent,
                             token.type,
-                            token.value.replace("\n", "\\n").replace("\r", "\\r"),
+                            token.value.replace(
+                                "\n", "\\n").replace("\r", "\\r"),
                             token_lineno,
                             token.col_offset,
                             token.end_col_offset,
@@ -151,7 +152,8 @@ class _FullIndexer(_AbstractIndexer):
             for stack, node in _iter_nodes(ast):
                 lst = self._name_to_node_info_lst.get(node.__class__.__name__)
                 if lst is None:
-                    lst = self._name_to_node_info_lst[node.__class__.__name__] = []
+                    lst = self._name_to_node_info_lst[node.__class__.__name__] = [
+                    ]
 
                 lst.append(NodeInfo(tuple(stack), node))
             self._indexed_full = True
@@ -204,7 +206,8 @@ class _SectionIndexer(_AbstractIndexer):
             raise RuntimeError("AST already garbage collected.")
 
         for stack, node in _iter_nodes(ast, recursive=False):
-            lst = self._first_level_name_to_node_info_lst.get(node.__class__.__name__)
+            lst = self._first_level_name_to_node_info_lst.get(
+                node.__class__.__name__)
             if lst is None:
                 lst = self._first_level_name_to_node_info_lst[
                     node.__class__.__name__
@@ -328,7 +331,8 @@ def collect_errors(node) -> List[Error]:
             node_errors = getattr(node, "errors", ())
             if node_errors:
                 for error in node_errors:
-                    errors.append(create_error_from_node(node, error, tokens=[node]))
+                    errors.append(create_error_from_node(
+                        node, error, tokens=[node]))
 
         if len(errors) >= MAX_ERRORS:
             break
@@ -590,7 +594,8 @@ def find_token(section, line, col) -> Optional[TokenInfo]:
                     if last_token is not None and not token.value.strip():
                         eol_contents = token.value[:diff]
                         if len(eol_contents) <= 1:
-                            token = _append_eol_to_prev_token(last_token, eol_contents)
+                            token = _append_eol_to_prev_token(
+                                last_token, eol_contents)
 
                     return TokenInfo(tuple(stack), node, token)
 
@@ -705,7 +710,8 @@ def find_variable(section, line, col) -> Optional[VarTokenInfo]:
 
 
 def tokenize_variables_from_name(name):
-    return tokenize_variables(create_token(name))  # May throw error if it's not OK.
+    # May throw error if it's not OK.
+    return tokenize_variables(create_token(name))
 
 
 def tokenize_variables(token: IRobotToken) -> Iterator[IRobotToken]:
@@ -738,7 +744,7 @@ def _tokenize_variables_even_when_invalid(
 
     if open_at >= 1:
         if up_to_cursor[open_at - 1] in VARIABLE_PREFIXES:
-            varname = [up_to_cursor[open_at - 1 :]]
+            varname = [up_to_cursor[open_at - 1:]]
             from_cursor = token.value[diff:]
 
             for c in from_cursor:
@@ -840,7 +846,8 @@ def _iter_library_imports_uncached(ast):
 
             for token in iter_in:
                 if token.type == token.ARGUMENT and token.value == "WITH NAME":
-                    use_tokens.append(copy_token_replacing(token, type=token.WITH_NAME))
+                    use_tokens.append(copy_token_replacing(
+                        token, type=token.WITH_NAME))
                     for token in iter_in:
                         if token.type == token.ARGUMENT:
                             use_tokens.append(
@@ -1089,6 +1096,7 @@ def iter_local_assigns(ast) -> Iterator[VarTokenInfo]:
         ("ExceptHeader", Token.VARIABLE),  # RF <= 6.1
         ("ExceptHeader", Token.ASSIGN),  # RF > 6.1
         ("InlineIfHeader", Token.ASSIGN),
+        ("Var", Token.VARIABLE),  # RF 7
     ):
         for node_info in ast.iter_indexed(clsname):
             node = node_info.node
@@ -1099,7 +1107,7 @@ def iter_local_assigns(ast) -> Iterator[VarTokenInfo]:
                     i = value.find("{")
                     j = value.rfind("}")
                     if i != -1 and j != -1 and i >= 1:
-                        new_value = value[i + 1 : j]
+                        new_value = value[i + 1: j]
                         token = Token(
                             type=token.type,
                             value=new_value,
@@ -1163,6 +1171,7 @@ def _tokenize_subvars_tokens(
         var_type = Token.ARGUMENT
 
     if "{" not in initial_token.value:
+        yield (initial_token, AdditionalVarInfo())
         return
 
     if initial_token.value.startswith("{") and initial_token.value.endswith("}"):
@@ -1243,6 +1252,7 @@ def iter_variable_references(ast) -> Iterator[VarTokenInfo]:
         "ForHeader",  # RF 4+
         "ForLoopHeader",  # RF 3
         "ReturnStatement",  # RF 5
+        "Var",  # RF 7
     ) + _FIXTURE_CLASS_NAMES:
         for node_info in ast.iter_indexed(clsname):
             stack = node_info.stack
@@ -1293,7 +1303,8 @@ def iter_variable_references(ast) -> Iterator[VarTokenInfo]:
                             if _is_store_keyword(usage_info.node):
                                 continue
 
-                        next_tok_type = keyword_usage_handler.get_token_type(token)
+                        next_tok_type = keyword_usage_handler.get_token_type(
+                            token)
                         if next_tok_type == keyword_usage_handler.EXPRESSION:
                             for tok, var_info in iter_expression_variables(token):
                                 if tok.type == token.VARIABLE:
@@ -1591,7 +1602,7 @@ def _strip_token_bdd_prefix(
                 continue
 
             if next_is_space:
-                new_name = token.value[len(prefix) + 1 :]
+                new_name = token.value[len(prefix) + 1:]
                 return prefix, Token(
                     type=token.type,
                     value=new_name,
@@ -1650,7 +1661,8 @@ def copy_token_with_subpart_up_to_col(token, column):
 
 
 def create_range_from_token(token: IRobotToken) -> RangeTypedDict:
-    start: PositionTypedDict = {"line": token.lineno - 1, "character": token.col_offset}
+    start: PositionTypedDict = {
+        "line": token.lineno - 1, "character": token.col_offset}
     end: PositionTypedDict = {
         "line": token.lineno - 1,
         "character": token.end_col_offset,
@@ -1662,7 +1674,8 @@ def create_range_from_token(token: IRobotToken) -> RangeTypedDict:
 def create_range_from_tokens(
     token: IRobotToken, end_token: IRobotToken
 ) -> RangeTypedDict:
-    start: PositionTypedDict = {"line": token.lineno - 1, "character": token.col_offset}
+    start: PositionTypedDict = {
+        "line": token.lineno - 1, "character": token.col_offset}
     end: PositionTypedDict = {
         "line": end_token.lineno - 1,
         "character": end_token.end_col_offset,
@@ -1907,7 +1920,7 @@ class RobotMatchTokensGenerator:
         if until_offset > self.last_gen_end_offset:
             from robot.api import Token
 
-            val = token.value[self.last_gen_end_offset : until_offset]
+            val = token.value[self.last_gen_end_offset: until_offset]
             if val.strip():  # Don't generate just for whitespaces.
                 yield (
                     Token(
@@ -1947,7 +1960,8 @@ class RobotMatchTokensGenerator:
 
         token = self.token
         if not robot_match.base:
-            i = token.value.find("{", robot_match.start + last_relative_index) + 1
+            i = token.value.find(
+                "{", robot_match.start + last_relative_index) + 1
         else:
             i = token.value.find(
                 robot_match.base, robot_match.start + last_relative_index
@@ -1960,7 +1974,7 @@ class RobotMatchTokensGenerator:
         yield (
             Token(
                 op_type,
-                token.value[robot_match.start + last_relative_index : i],
+                token.value[robot_match.start + last_relative_index: i],
                 token.lineno,
                 token.col_offset + start_offset,
                 token.error,
@@ -1993,7 +2007,7 @@ class RobotMatchTokensGenerator:
                 first_subvar_match_in_base
                 and first_subvar_match_in_base.start > len(var_name_from_base)
             ):
-                base_or_extended_part = base[len(var_name_from_base) :]
+                base_or_extended_part = base[len(var_name_from_base):]
                 offset += len(var_name_from_base)
                 yield (
                     Token(
@@ -2082,7 +2096,8 @@ def _gen_tokens_in_py_expr(
                             expression_token.col_offset + start_offset,
                             expression_token.error,
                         ),
-                        AdditionalVarInfo(context=AdditionalVarInfo.CONTEXT_EXPRESSION),
+                        AdditionalVarInfo(
+                            context=AdditionalVarInfo.CONTEXT_EXPRESSION),
                     )
 
                     yield (
@@ -2099,7 +2114,8 @@ def _gen_tokens_in_py_expr(
                     )
 
     except:
-        log.exception(f"Unable to evaluate python expression from: {expression_token}")
+        log.exception(f"Unable to evaluate python expression from: {
+                      expression_token}")
 
 
 def iter_expression_tokens(
@@ -2122,7 +2138,8 @@ def iter_expression_tokens(
     robot_match = None
     for robot_match, relative_index in robot_matches_and_relative_index:
         expression_to_evaluate.append(robot_match.before)
-        expression_to_evaluate.append("1" * (robot_match.end - robot_match.start))
+        expression_to_evaluate.append(
+            "1" * (robot_match.end - robot_match.start))
 
     if robot_match is None:
         after = expression_token.value
@@ -2140,7 +2157,8 @@ def iter_expression_tokens(
                 _gen_tokens_in_py_expr(expr, expression_token)
             )
 
-    robot_match_generator = RobotMatchTokensGenerator(expression_token, default_type)
+    robot_match_generator = RobotMatchTokensGenerator(
+        expression_token, default_type)
 
     # Now, let's put the vars from python and the robot matches we have in a
     # sorted list so that we can iterate properly.

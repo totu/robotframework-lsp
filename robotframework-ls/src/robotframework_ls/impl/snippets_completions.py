@@ -151,6 +151,19 @@ _SNIPPETS_RF5 = {
     },
 }
 
+_SNIPPETS_RF7 = {
+    "VAR": {
+        "prefix": "VAR",
+        "body": ["VAR<sp>${${1:variable}}<sp>${2:value}<sp>scope=${3:LOCAL}"],
+        "description": "Snippet for VAR",
+    },
+    "GROUP": {
+        "prefix": "GROUP",
+        "body": ["GROUP<sp>${1:name}", "    $0", "END"],
+        "description": "Snippet for GROUP",
+    },
+}
+
 _SNIPPETS_SORTED = None
 
 
@@ -164,6 +177,9 @@ def _get_global_snippets():
 
         if get_robot_major_version() >= 5:
             use.update(_SNIPPETS_RF5)
+
+        if get_robot_major_version() >= 7:
+            use.update(_SNIPPETS_RF7)
 
         _SNIPPETS_SORTED = sorted(use.items())
 
@@ -215,7 +231,7 @@ def complete(completion_context: ICompletionContext) -> List[CompletionItemTyped
     """
     from robotframework_ls.robot_config import get_arguments_separator
 
-    sel = completion_context.sel  #::type sel: DocumentSelection
+    sel = completion_context.sel  # ::type sel: DocumentSelection
     line_to_column = sel.line_to_column.lstrip().lower()
     if not line_to_column:
         return []

@@ -79,7 +79,8 @@ class _KeywordContainer(object):
 class _VariablesCollector(AbstractVariablesCollector):
     def __init__(self, on_unresolved_variable_import) -> None:
         self._variables_collected: Dict[str, List[IVariableFound]] = {}
-        self._template_variables_collected: List[Tuple[str, IVariableFound]] = []
+        self._template_variables_collected: List[Tuple[str, IVariableFound]] = [
+        ]
         self.on_unresolved_variable_import: Any = on_unresolved_variable_import
 
         self._env_variables_collected: Dict[str, IVariableFound] = {}
@@ -96,7 +97,8 @@ class _VariablesCollector(AbstractVariablesCollector):
 
         normalized = normalize_robot_name(variable_found.variable_name)
         if "{" in normalized:
-            self._template_variables_collected.append((normalized, variable_found))
+            self._template_variables_collected.append(
+                (normalized, variable_found))
 
         lst = self._variables_collected.get(normalized)
         if lst is None:
@@ -199,10 +201,12 @@ class _AnalysisKeywordsCollector(object):
             if not name or not remainder:
                 continue
             containers = []
-            keywords_container = self._resource_name_to_keywords_container.get(name)
+            keywords_container = self._resource_name_to_keywords_container.get(
+                name)
             if keywords_container:
                 containers.append(keywords_container)
-            keywords_container = self._library_name_to_keywords_container.get(name)
+            keywords_container = self._library_name_to_keywords_container.get(
+                name)
             if keywords_container:
                 containers.append(keywords_container)
 
@@ -212,7 +216,8 @@ class _AnalysisKeywordsCollector(object):
         if not ret:
             # Finding with a dotted name has higher priority over finding it
             # without the qualifier.
-            ret.extend(self._keywords_container.get_keywords(normalized_keyword_name))
+            ret.extend(self._keywords_container.get_keywords(
+                normalized_keyword_name))
 
         return ret
 
@@ -318,7 +323,8 @@ def collect_analysis_errors(initial_completion_context):
             else:
                 if "expected" in error_msg:
                     if re.search(r"expected\s+(.*)\s+argument(s)?,\s+got", error_msg):
-                        additional = f'\nConsider using default arguments in the {library_name} constructor and\ncalling the "Robot Framework: Clear caches and restart" action or\nadding "{library_name}" to the "robot.libraries.libdoc.needsArgs"\nsetting to pass the typed arguments when generating the libspec.'
+                        additional = f'\nConsider using default arguments in the {library_name} constructor and\ncalling the "Robot Framework: Clear caches and restart" action or\nadding "{
+                            library_name}" to the "robot.libraries.libdoc.needsArgs"\nsetting to pass the typed arguments when generating the libspec.'
 
                 if not additional and "Importing" in error_msg:
                     if get_robot_major_version() <= 3:
@@ -332,7 +338,8 @@ def collect_analysis_errors(initial_completion_context):
                         error_msg += f"\nNote: resolved name: {resolved_name}"
 
             error = ast_utils.Error(
-                f"Unresolved library: {library_name}.{error_msg}{additional}".strip(),
+                f"Unresolved library: {library_name}.{
+                    error_msg}{additional}".strip(),
                 start,
                 end,
             )
@@ -390,6 +397,9 @@ def collect_analysis_errors(initial_completion_context):
     collect_keywords(initial_completion_context, collector)
 
     ast = initial_completion_context.get_ast()
+    from robotframework_ls.impl.robot_version import get_robot_major_version
+    is_v7 = get_robot_major_version() >= 7
+
     for keyword_usage_info in ast_utils.iter_keyword_usage_tokens(
         ast, collect_args_as_keywords=True
     ):
@@ -400,11 +410,15 @@ def collect_analysis_errors(initial_completion_context):
         keywords_found = collector.get_keywords(normalized_name)
         if not keywords_found and keyword_usage_info.prefix:
             keywords_found = collector.get_keywords(
-                normalize_robot_name(keyword_usage_info.prefix + normalized_name)
+                normalize_robot_name(
+                    keyword_usage_info.prefix + normalized_name)
             )
 
         try:
             if not keywords_found:
+                if is_v7 and normalize_robot_name(keyword_usage_info.name) == "group":
+                    continue
+
                 from robotframework_ls.impl.robot_lsp_constants import (
                     OPTION_ROBOT_LINT_UNDEFINED_KEYWORDS,
                 )
@@ -489,19 +503,25 @@ def collect_analysis_errors(initial_completion_context):
 
                     if count_not_in_stdlib > 1:
                         if found_in_current:
-                            msg = f"Multiple keywords matching: '{keyword_usage_info.name}' in current file."
+                            msg = f"Multiple keywords matching: '{
+                                keyword_usage_info.name}' in current file."
                         else:
-                            found_in_str = "'" + "', '".join(sorted(found_in)) + "'"
+                            found_in_str = "'" + \
+                                "', '".join(sorted(found_in)) + "'"
                             if len(found_in) == 1:
-                                msg = f"Multiple keywords matching: '{keyword_usage_info.name}' in {found_in_str}."
+                                msg = f"Multiple keywords matching: '{
+                                    keyword_usage_info.name}' in {found_in_str}."
                             else:
                                 if "." in keyword_usage_info.name:
-                                    msg = f"Multiple keywords matching: '{keyword_usage_info.name}' in {found_in_str}."
+                                    msg = f"Multiple keywords matching: '{
+                                        keyword_usage_info.name}' in {found_in_str}."
                                 else:
                                     msg = (
-                                        f"Multiple keywords matching: '{keyword_usage_info.name}' in {found_in_str}.\n"
+                                        f"Multiple keywords matching: '{
+                                            keyword_usage_info.name}' in {found_in_str}.\n"
                                         f"Please provide the name with the full qualifier (i.e.: "
-                                        f"'{sorted(found_in)[0] + '.' + keyword_usage_info.name}')."
+                                        f"'{sorted(found_in)[
+                                            0] + '.' + keyword_usage_info.name}')."
                                     )
                         from robotframework_ls.impl.robot_lsp_constants import (
                             OPTION_ROBOT_LINT_KEYWORD_RESOLVES_TO_MULTIPLE_KEYWORDS,
@@ -542,7 +562,8 @@ def collect_analysis_errors(initial_completion_context):
                     if found_error_in_arg_analysis:
                         break
 
-                    keyword_token = keyword_usage_info.node.get_token(Token.KEYWORD)
+                    keyword_token = keyword_usage_info.node.get_token(
+                        Token.KEYWORD)
                     if keyword_token is not None:
                         # Ok, we found the keyword, let's check if the arguments are correct.
                         keyword_argument_analysis = KeywordArgumentAnalysis(
@@ -592,7 +613,8 @@ def collect_analysis_errors(initial_completion_context):
                     if keyword_found.is_deprecated():
                         error = create_error_from_node(
                             keyword_usage_info.node,
-                            f"Keyword: {keyword_usage_info.name} is deprecated",
+                            f"Keyword: {
+                                keyword_usage_info.name} is deprecated",
                             tokens=[keyword_usage_info.token],
                         )
                         error.severity = DiagnosticSeverity.Hint
@@ -651,7 +673,8 @@ class _NoReferencesErrorsKeywordsCollector(AbstractKeywordCollector):
             end = (keyword_found.end_lineno, keyword_found.end_col_offset)
 
             error = Error(
-                f"The keyword: '{keyword_found.keyword_name}' is not used in the workspace.",
+                f"The keyword: '{
+                    keyword_found.keyword_name}' is not used in the workspace.",
                 start,
                 end,
                 DiagnosticSeverity.Warning,
@@ -681,7 +704,8 @@ def _collect_unused_keyword_errors(completion_context: ICompletionContext, error
             Optional[RobotWorkspace], completion_context.workspace
         )
         if not workspace:
-            log.critical("Not analyzing unused keywords because workspace is None.")
+            log.critical(
+                "Not analyzing unused keywords because workspace is None.")
             return
 
         workspace_indexer = workspace.workspace_indexer
@@ -753,7 +777,8 @@ def _collect_undefined_variables_errors(initial_completion_context):
             start = (lineno - 1, col_offset)
             end = (end_lineno - 1, end_col_offset)
             if not error_msg:
-                error_msg = f"Unresolved variable import: {variable_import_name}"
+                error_msg = f"Unresolved variable import: {
+                    variable_import_name}"
                 if "{" in variable_import_name and resolved_name:
                     error_msg += f"\nNote: resolved name: {resolved_name}"
 
@@ -844,7 +869,8 @@ def _collect_undefined_variables_errors(initial_completion_context):
                 # Environment variable
                 yield create_error_from_node(
                     token_info.node,
-                    f"Undefined environment variable: {token_info.token.value}",
+                    f"Undefined environment variable: {
+                        token_info.token.value}",
                     tokens=[token_info.token],
                 )
             continue
@@ -858,7 +884,8 @@ def _collect_undefined_variables_errors(initial_completion_context):
                 continue
 
             check_names.append(
-                normalize_variable_name(var_name + token_info.var_info.extended_part)
+                normalize_variable_name(
+                    var_name + token_info.var_info.extended_part)
             )
 
         locals_collector = None
@@ -880,7 +907,8 @@ def _collect_undefined_variables_errors(initial_completion_context):
                 break
 
             if locals_collector is None:
-                locals_collector = _VariablesCollector(lambda *args, **kwargs: None)
+                locals_collector = _VariablesCollector(
+                    lambda *args, **kwargs: None)
                 local_ctx = initial_completion_context.create_copy_with_selection(
                     line=token_info.token.lineno - 1,
                     col=token_info.token.col_offset,

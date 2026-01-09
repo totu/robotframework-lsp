@@ -12,6 +12,35 @@ from robotframework_ls.impl.protocols import ICompletionContext
 def hover(completion_context: ICompletionContext) -> Optional[HoverTypedDict]:
     from robotframework_ls.impl.find_definition import find_definition_extended
     from robotframework_ls.impl import ast_utils
+    from robot.api import Token
+
+    token_info = completion_context.get_current_token()
+    if token_info and token_info.token:
+        token_type = token_info.token.type
+        token_value = token_info.token.value.upper()
+
+        # VAR handling
+        if token_type == getattr(Token, 'VAR', 'VAR'):
+            return {
+                "contents": {
+                    "kind": MarkupKind.Markdown,
+                    "value": "**VAR**\n\nCreates a variable in the specified scope.\n\n"
+                    "Syntax: `VAR    ${variable}    value    scope=LOCAL|TEST|SUITE|GLOBAL`"
+                },
+                "range": ast_utils.create_range_from_token(token_info.token)
+            }
+
+        # GROUP handling
+        if (token_type == getattr(Token, 'GROUP', 'GROUP')) or \
+           ((token_type == Token.KEYWORD or token_type == Token.NAME) and token_value == "GROUP"):
+            return {
+                "contents": {
+                    "kind": MarkupKind.Markdown,
+                    "value": "**GROUP**\n\nGroups keywords or tasks.\n\n"
+                    "Syntax:\n```robot\nGROUP    Optional Name\n    Keyword\nEND\n```"
+                },
+                "range": ast_utils.create_range_from_token(token_info.token)
+            }
 
     definition_info = find_definition_extended(completion_context)
     if definition_info:
@@ -27,7 +56,8 @@ def hover(completion_context: ICompletionContext) -> Optional[HoverTypedDict]:
 
     from robotframework_ls.impl.signature_help import signature_help_internal
 
-    sig_help: Optional[SignatureHelp] = signature_help_internal(completion_context)
+    sig_help: Optional[SignatureHelp] = signature_help_internal(
+        completion_context)
     if sig_help is None:
         return None
 
@@ -53,7 +83,7 @@ def hover(completion_context: ICompletionContext) -> Optional[HoverTypedDict]:
     kind = documentation_markup["kind"]
 
     # Now, let's add the signature to the documentation
-    escape = lambda s: s
+    def escape(s): return s
 
     if kind == MarkupKind.Markdown:
         from robotframework_ls import html_to_markdown
@@ -84,7 +114,8 @@ def hover(completion_context: ICompletionContext) -> Optional[HoverTypedDict]:
                 add_documentation = False
                 signature_doc.insert(
                     0,
-                    f"Parameter: {prefix_highlight}{escaped_label}{postfix_highlight} in Keyword Call.\n\n",
+                    f"Parameter: {prefix_highlight}{escaped_label}{
+                        postfix_highlight} in Keyword Call.\n\n",
                 )
 
                 signature_doc.append(prefix_highlight)
