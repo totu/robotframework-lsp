@@ -42,6 +42,11 @@ See: [Contributing](docs/contributing.md) for how to help in the development of 
 
 See: [Reporting Issue](docs/reporting_issues.md) for details on how to report some issue in the `Robot Framework Language Server`.
 
+## Features (1.13.1)
+
+-   Robot Framework 7.4 support
+-   Robocop 7.2 support
+
 ## Features (1.13.0)
 
 -   Robot Output View:

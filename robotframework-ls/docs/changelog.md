@@ -1,9 +1,17 @@
+New in 1.13.1 (2026-01-09)
+-----------------------------
+
+### New features
+
+- Added support for Robot Framework 7.4 syntax
+- Added support for Robocop 7.2
+
 New in 1.13.0 (2024-10-03)
 -----------------------------
 
 ### New features
 
-- The `Robot Framework Language Server` can now work both with `Robocorp Code` (which is currently deprecated) 
+- The `Robot Framework Language Server` can now work both with `Robocorp Code` (which is currently deprecated)
   as well as well as with the new `Sema4.ai VSCode extension` (which supersedes `Robocorp Code` for `Robots`
   development and also has support for developing AI actions).
 
@@ -75,7 +83,7 @@ New in 1.9.0 (2023-02-03)
 
 - Properly report about undefined variable in `RETURN`. [#865](https://github.com/robocorp/robotframework-lsp/issues/865)
 - References to variables used in `Evaluate` arguments are now properly collected.
-- Don't show completion for the variable being currently defined in variable assign. 
+- Don't show completion for the variable being currently defined in variable assign.
 
 
 New in 1.8.0 (2023-01-23)
@@ -96,7 +104,7 @@ New in 1.8.0 (2023-01-23)
 
 ### Bugfixes
 
-- Text ranges when dealing with emoji unicode characters are now correct. [#862](https://github.com/robocorp/robotframework-lsp/issues/862)  
+- Text ranges when dealing with emoji unicode characters are now correct. [#862](https://github.com/robocorp/robotframework-lsp/issues/862)
 - Code analysis fix:  An arguments with a name with '=' must match a star arg with the full name if the name was already found (in RF keyword and not python method). [#860](https://github.com/robocorp/robotframework-lsp/issues/860)
 
 
@@ -134,7 +142,7 @@ New in 1.6.0 (2022-12-03)
   - Now shows the contents of the current run in real time.
   - Can filter out keywords with `NOT RUN` status.
   - Hides iteration nodes after the 50th iteration (only if marked as `PASS` or `NOT RUN`).
-  - Embeds HTML contents from log entries with `html=true`. 
+  - Embeds HTML contents from log entries with `html=true`.
 
 - Code completion is now provided for the library name and resource name.
 
@@ -234,18 +242,18 @@ New in 1.2.0 (2022-09-28)
     - A new option: `robot.run.peekError.level` defines up to which level the logs should be shown in the resulting `Peek Error` window.
     - A new option: `robot.run.peekError.showSummary` defines whether a message should be shown at the task/test level with a summary of the errors.
     - Traceback is shown on error in `Peek Error` window.
-    
+
     ![Peek error traceback](./images/changelog/1_2_0/peek_error_traceback.png)
-    
+
 - Log messages now appear in the `DEBUG CONSOLE` view even when running without debugging.
 
     ![Log Messages](./images/changelog/1_2_0/log_messages.png)
-    
+
 - A `ROBOT DOCUMENTATION` view is now available for showing documentation.
     - When the cursor is over a library name, shows the full documentation for that library.
-    
+
     ![Robot Documentation](./images/changelog/1_2_0/robot_documentation.png)
-    
+
 - Flow Explorer now has custom handling for `[Setup]` and `[Teardown]`.
 
     ![Flow Explorer Setup/Teardown](./images/changelog/1_2_0/flow_explorer_setup_teardown.png)
@@ -286,7 +294,7 @@ New in 1.1.0 (2022-08-24)
 - [VSCode] A non-string value is converted to string before expanding variables. [#727](https://github.com/robocorp/robotframework-lsp/issues/727)
 - Operations no longer timeout, rather, they just print to the log (as the timeouts weren't always ideal for slower machines). [#733](https://github.com/robocorp/robotframework-lsp/issues/733)
 - Fixed issue where references wouldn't be found properly.
-- Variables imported from module folder (`module/__init__.py`) are properly recognized. [#734](https://github.com/robocorp/robotframework-lsp/issues/734) 
+- Variables imported from module folder (`module/__init__.py`) are properly recognized. [#734](https://github.com/robocorp/robotframework-lsp/issues/734)
 
 
 New in 1.0.0 (2022-08-09)
@@ -383,7 +391,7 @@ New in 0.47.0 (2022-05-11)
 - Properly recognize loop variables in RF 3. [#661](https://github.com/robocorp/robotframework-lsp/issues/661)
 - Properly recognize variable that evaluates to 0.
 - Properly recognize variables from Python that start with `DICT__` or `LIST__`.
-- Fix syntax highlight of inline python evaluation inside of variables in IF statements. [#666](https://github.com/robocorp/robotframework-lsp/issues/666) 
+- Fix syntax highlight of inline python evaluation inside of variables in IF statements. [#666](https://github.com/robocorp/robotframework-lsp/issues/666)
 - Properly consider that the `Comment` keyword arguments should be handled as comments. [#665](https://github.com/robocorp/robotframework-lsp/issues/665)
 
 
@@ -420,10 +428,10 @@ New in 0.44.0 (2022-04-07)
 -----------------------------
 
 - Improvements dealing with **Variables**:
-  - Variables in document are considered in Libdoc arguments. [#634](https://github.com/robocorp/robotframework-lsp/issues/634) 
-  - Escaping rules are considered when setting variables using `Set Variable XXX` keywords. [#638](https://github.com/robocorp/robotframework-lsp/issues/638) 
-  - Variables set with `Set Local Variable` are recognized. [#637](https://github.com/robocorp/robotframework-lsp/issues/637) 
-  - Consider that loading an environment variable may have a default value. [#633](https://github.com/robocorp/robotframework-lsp/issues/633) 
+  - Variables in document are considered in Libdoc arguments. [#634](https://github.com/robocorp/robotframework-lsp/issues/634)
+  - Escaping rules are considered when setting variables using `Set Variable XXX` keywords. [#638](https://github.com/robocorp/robotframework-lsp/issues/638)
+  - Variables set with `Set Local Variable` are recognized. [#637](https://github.com/robocorp/robotframework-lsp/issues/637)
+  - Consider that loading an environment variable may have a default value. [#633](https://github.com/robocorp/robotframework-lsp/issues/633)
   - Variables in python files with annotated assignments are supported (i.e.: `value: int = 10`). [#629](https://github.com/robocorp/robotframework-lsp/issues/629)
   - Variables in templates are not reported as errors. [#632](https://github.com/robocorp/robotframework-lsp/issues/632)
   - Properly deal with variables with other variables inside. [#631](https://github.com/robocorp/robotframework-lsp/issues/631)
@@ -431,11 +439,11 @@ New in 0.44.0 (2022-04-07)
 - Improvements in debugger:
   - The debugger no longer stops in `Run Keyword And Return Status` by default. [#625](https://github.com/robocorp/robotframework-lsp/issues/625)
   - Assign to variable in debug console repl (i.e.: `${lst}=    Create list    a    b`).
-  - Fixed case where breakpoints in `.py` files wouldn't be added. 
+  - Fixed case where breakpoints in `.py` files wouldn't be added.
 - Code-lenses (Run/Debug/Interactive console) are shown by default again.
     - The `robot.codeLens.enable` setting may be used to disable them.
-- Upgraded vendored `robocop` to `2.0.1`. 
-- Upgraded vendored `robotframework-tidy` to `2.1.0`. 
+- Upgraded vendored `robocop` to `2.0.1`.
+- Upgraded vendored `robotframework-tidy` to `2.1.0`.
 
 
 New in 0.43.2 (2022-03-29)
@@ -459,7 +467,7 @@ New in 0.43.0 (2022-03-28)
         - Set Test Variable
         - Set Suite Variable
         - Set Global Variable
-    - Variable files with a `.yml` are properly recognized (previously only `.yaml` was supported). 
+    - Variable files with a `.yml` are properly recognized (previously only `.yaml` was supported).
     - Semantic highlighting properly deals with advanced variable syntax (with variables inside variables or using a subscript).
     - Variables in assign now have the same color as variables in other places. [#613](https://github.com/robocorp/robotframework-lsp/issues/613)
     - Variable imports which can't be resolved are reported.
@@ -479,7 +487,7 @@ New in 0.42.0 (2022-03-14)
 - Semantic highlighting only highlights names up to a dot if a related import/resource is found to avoid conflict with Keywords with a dot in the name. [#585](https://github.com/robocorp/robotframework-lsp/issues/585) (patch by @weltings)
 - Semantic highlighting available for variables in keyword calls. [#586](https://github.com/robocorp/robotframework-lsp/issues/586)
 - Semantic highlighting for `WHILE limit=` and `EXCEPT type=`.
-- Report unresolved variables when resolving a resource/import. [#600](https://github.com/robocorp/robotframework-lsp/issues/600) 
+- Report unresolved variables when resolving a resource/import. [#600](https://github.com/robocorp/robotframework-lsp/issues/600)
 - Performance improvements
   - Don't index everything in AST when only items from the section (LibraryImport, ResourceImport, ...) are requested.
   - Caching of dependencies.
@@ -504,7 +512,7 @@ New in 0.41.0 (2022-02-22)
 - Interactive console: snippet mode is exited when a line is evaluated. [#570](https://github.com/robocorp/robotframework-lsp/issues/570)
 - References are found when find references is activated from the keyword definition. [#576](https://github.com/robocorp/robotframework-lsp/issues/576)
 - Semantic highlighting for Keywords with dotted access improved.
-- The documentation conversion from `REST` and `ROBOT` to `markdown` is now done internally. 
+- The documentation conversion from `REST` and `ROBOT` to `markdown` is now done internally.
 
 
 New in 0.40.1 (2022-02-12)
@@ -559,7 +567,7 @@ New in 0.38.0 (2022-01-26)
 - When launching, better heuristics are used to create a proper test suite. [#482](https://github.com/robocorp/robotframework-lsp/issues/482)
   - A suite is created considering `__init__.robot` in parents based on the specified `target`.
   - By default the `target` will be used to compute the suite as well as the needed filtering.
-  - It's possible to specify a `suiteTarget` in the launch now to force a given suite to be created (the `target` is still used for filtering afterwards). 
+  - It's possible to specify a `suiteTarget` in the launch now to force a given suite to be created (the `target` is still used for filtering afterwards).
 - When hovering for go to definition the origin location properly highlights the whole region not just the current word.  [#279](https://github.com/robocorp/robotframework-lsp/issues/279)
 - Document highlighting is now provided for keywords and variables.
 - MarkupContent is now properly used in the signature help.
@@ -600,7 +608,7 @@ New in 0.35.0 (2021-12-22)
 
 - Find references is now implemented. [#396](https://github.com/robocorp/robotframework-lsp/issues/396)
 - Chars are now properly escaped when setting environment variables during launching. [#528](https://github.com/robocorp/robotframework-lsp/issues/528)
-- On Robot Framework 5, the builtin tidy is no longer available, so, the new robotidy is used automatically.                                  
+- On Robot Framework 5, the builtin tidy is no longer available, so, the new robotidy is used automatically.
 - The minimum VSCode version is now 1.61.0
 
 
@@ -613,7 +621,7 @@ New in 0.34.0 (2021-12-16)
   i.e.: If the code-lens template wasn't being found in `0.33.0`, this should be fixed in `0.34.0`.
 
 - The Robot Framework Language Server is now automatically restarted if some configuration related to starting it is changed.
-  i.e.: 
+  i.e.:
   - `"robot.language-server.python"`
   - `"robot.language-server.tcp-port"`
   - `"robot.language-server.args"`
@@ -643,7 +651,7 @@ New in 0.31.0 (2021-12-01)
 New in 0.30.0 (2021-12-01)
 -----------------------------
 
-- Library arguments can now be used in the libspec generation. Patch by `Jozef Grajciar`. [#343](https://github.com/robocorp/robotframework-lsp/issues/343) 
+- Library arguments can now be used in the libspec generation. Patch by `Jozef Grajciar`. [#343](https://github.com/robocorp/robotframework-lsp/issues/343)
   - `robot.libraries.libdoc.needsArgs` setting can be used to specify which libraries require arguments in the generation.
   - `Remote` and `FakerLib` are set by default.
 - Libspec files may be pre-generated. [#163](https://github.com/robocorp/robotframework-lsp/issues/163)
@@ -745,12 +753,12 @@ New in 0.21.0 (2021-08-18)
 New in 0.20.0 (2021-07-29)
 -----------------------------
 
-- ${workspaceFolder} is accepted when resolving variables. 
+- ${workspaceFolder} is accepted when resolving variables.
 - ${env:VAR_NAME} is accepted when resolving variables.
 - Robocop updated to 1.8.1.
 - When using the poll mode for tracking file changes, it's possible to ignore directories. [#398](https://github.com/robocorp/robotframework-lsp/issues/398)
 - dict(&)/list(@) variables can be referenced as regular ($) variables. [#387](https://github.com/robocorp/robotframework-lsp/issues/387)
-- Completion for dictionary items with subscript. Fix by: Marduk Bolaños. [#301](https://github.com/robocorp/robotframework-lsp/issues/301) 
+- Completion for dictionary items with subscript. Fix by: Marduk Bolaños. [#301](https://github.com/robocorp/robotframework-lsp/issues/301)
 - Completion for dictionary variable names. Fix by: Marduk Bolaños. [#301](https://github.com/robocorp/robotframework-lsp/issues/301)
 
 
@@ -770,7 +778,7 @@ New in 0.18.0 (2021-06-02)
   - Loads variables from `.py` and `.yaml` files.
 - Semantic highlighting: equals sign no longer causes incorrect coloring on `catenate` keyword and `documentation` section.
 - A module shadowing `builtin.py` no longer causes the default `Builtin` module not to be found anymore.
-- Code analysis no longer throws error when dealing with a `Library` without a name declared. 
+- Code analysis no longer throws error when dealing with a `Library` without a name declared.
 - Robocop updated to 1.7.1.
 
 
@@ -788,8 +796,8 @@ New in 0.17.0 (2021-05-24)
   - It's now possible to set an environment variable `ROBOTFRAMEWORK_LS_POLL_TIME=<poll time in seconds>` to change the filesystem target poll time.
   - When possible, it's recommended to set an environment variable `ROBOTFRAMEWORK_LS_WATCH_IMPL=watchdog` to use native watches on Linux and MacOS (already default on Windows).
   - A file-observer is started as a separate process and multiple clients communicate with it.
-  
- 
+
+
 New in 0.16.0 (2021-05-12)
 -----------------------------
 
@@ -829,7 +837,7 @@ New in 0.12.0 (2021-04-01)
 
 - By default, fsnotify (polling) is now used on Linux and Mac and watchdog (native) on Windows due to resource usage limits on Linux and Mac.
   Using `watchdog` is still recommended when possible. See the [FAQ](https://github.com/robocorp/robotframework-lsp/blob/master/robotframework-ls/docs/faq.md#how-to-change-the-file-watch-mode)
-  for details. 
+  for details.
 - Code-folding is now available. [#288](https://github.com/robocorp/robotframework-lsp/issues/288)
 - Hovering over keywords now shows its information.
 - Code analysis with empty teardown works properly. [#289](https://github.com/robocorp/robotframework-lsp/issues/289)
@@ -875,12 +883,12 @@ New in 0.9.0 (2021-03-03)
   - It may be useful in case watchdog is having glitches.
   - To use it, set an environment variable: `ROBOTFRAMEWORK_LS_WATCH_IMPL=fsnotify`
 - Gathering workspace symbols is much faster.
-- Keyword completions should not be duplicated by the auto-import Keyword completions anymore. 
+- Keyword completions should not be duplicated by the auto-import Keyword completions anymore.
 
 New in 0.8.0 (2021-02-16)
 -----------------------------
 
-- New setting: robot.workspaceSymbolsOnlyForOpenDocs for cases where code-completion is slow due to workspace symbols scanning. [#243](https://github.com/robocorp/robotframework-lsp/issues/243) 
+- New setting: robot.workspaceSymbolsOnlyForOpenDocs for cases where code-completion is slow due to workspace symbols scanning. [#243](https://github.com/robocorp/robotframework-lsp/issues/243)
 - Don't offer completions for section names after 2 spaces of the section name.
 - Debugger is working with the latest Robot Framework master.
 
@@ -1005,7 +1013,7 @@ New in 0.2.2 (2020-06-09)
 
 - `robot.pythonpath` setting automatically passed as `--pythonpath` argument when launching.
 - `robot.pythonpath` setting now used to locate resources and libraries for when resolving keywords. [#79](https://github.com/robocorp/robotframework-lsp/issues/79)
-- `robot.variables` setting automatically passed as `--variable` argument when launching. 
+- `robot.variables` setting automatically passed as `--variable` argument when launching.
 - `robot.variables` setting is now used in code completion for variables. [#21](https://github.com/robocorp/robotframework-lsp/issues/21)
 - Arguments shown in code completion when creating a Keyword. [#21](https://github.com/robocorp/robotframework-lsp/issues/21)
 - Support for Library Import with `WITH NAME` syntax. [#64](https://github.com/robocorp/robotframework-lsp/issues/64)
@@ -1074,7 +1082,7 @@ New in 0.0.9 (2020-04-20)
 New in 0.0.8 (2020-04-14)
 -----------------------------
 
-- Launch robotframework directly from VSCode (note: right now debugging is still not supported 
+- Launch robotframework directly from VSCode (note: right now debugging is still not supported
   -- a debug run will do a regular launch). Fixes [#29](https://github.com/robocorp/robotframework-lsp/issues/29)
 - A setting to complete section headers only in the plural/singular form is now available (`robot.completions.section_headers.form`). Fixes [#42](https://github.com/robocorp/robotframework-lsp/issues/42)
 - Improvements in syntax highlighting
