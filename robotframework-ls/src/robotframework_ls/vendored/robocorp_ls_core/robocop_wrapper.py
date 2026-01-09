@@ -72,7 +72,11 @@ def collect_robocop_diagnostics(
 
             config_manager = ConfigManager(root=str(root))
             robocop_runner = RobocopLinter(config_manager)
-            config = config_manager.get_default_config(None)
+            try:
+                config = config_manager.get_config_for_source_file(Path(filename))
+            except Exception:
+                log.exception("Error getting config for source file: %s. Using default config.", filename)
+                config = config_manager.get_default_config(None)
 
             # Monkeypatch Robocop 7.2.0 bug where it doesn't handle type hints without spaces (e.g. ${VAR:int})
             # See: https://github.com/MarketSquare/robotframework-robocop/issues/1065 (assumed/hypothetical issue)

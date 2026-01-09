@@ -1,0 +1,3 @@
+[console_scripts]
+robocop = robocop.run:main
+robocop-mcp = robocop.mcp.server:main
