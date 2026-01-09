@@ -33,8 +33,6 @@ def collect_robocop_diagnostics(
     _import_robocop()
 
     import robocop
-    from robocop.config import Config
-    from robocop.utils import issues_to_lsp_diagnostic
 
     filename_parent = Path(filename).parent
     # Set the working directory to the project root (tricky handling: Robocop
@@ -45,18 +43,80 @@ def collect_robocop_diagnostics(
         if os.path.exists(project_root):
             os.chdir(project_root)
 
-        if filename_parent.exists():
-            config = Config(root=filename_parent)
-        else:
-            # Unsaved files.
-            config = Config(root=project_root)
-        robocop_runner = robocop.Robocop(config=config)
-        robocop_runner.reload_config()
+        if hasattr(robocop, "Robocop"):
+            # Legacy Robocop (<7.0)
+            from robocop.config import Config
+            from robocop.utils import issues_to_lsp_diagnostic
 
-        issues = robocop_runner.run_check(ast_model, filename, source)
-        diag_issues = typing.cast(
-            List[DiagnosticsTypedDict], issues_to_lsp_diagnostic(issues)
-        )
+            if filename_parent.exists():
+                config = Config(root=filename_parent)
+            else:
+                # Unsaved files.
+                config = Config(root=project_root)
+            robocop_runner = robocop.Robocop(config=config)
+            robocop_runner.reload_config()
+
+            issues = robocop_runner.run_check(ast_model, filename, source)
+            diag_issues = typing.cast(
+                List[DiagnosticsTypedDict], issues_to_lsp_diagnostic(issues)
+            )
+        else:
+            # Robocop 7.0+
+            from robocop.config import ConfigManager
+            from robocop.linter.runner import RobocopLinter
+
+            if filename_parent.exists():
+                root = filename_parent
+            else:
+                root = project_root
+
+            config_manager = ConfigManager(root=str(root))
+            robocop_runner = RobocopLinter(config_manager)
+            config = config_manager.get_default_config(None)
+
+            # Monkeypatch Robocop 7.2.0 bug where it doesn't handle type hints without spaces (e.g. ${VAR:int})
+            # See: https://github.com/MarketSquare/robotframework-robocop/issues/1065 (assumed/hypothetical issue)
+            try:
+                from robocop.linter.utils import misc
+
+                def patched_remove_variable_type_conversion(name: str) -> str:
+                    if ":" in name:
+                        return name.split(":", 1)[0].strip()
+                    return name
+
+                misc.remove_variable_type_conversion = patched_remove_variable_type_conversion
+            except (ImportError, AttributeError):
+                pass
+
+            issues = robocop_runner.run_check(
+                model=ast_model,
+                file_path=Path(filename),
+                config=config,
+                in_memory_content=source,
+            )
+
+            diag_issues = []
+            for issue in issues:
+                # Manual conversion to avoid import errors and bugs in Robocop 7.2.0 misc.py
+                d: DiagnosticsTypedDict = {
+                    "range": {
+                        "start": {
+                            "line": max(0, issue.range.start.line - 1),
+                            "character": max(0, issue.range.start.character - 1),
+                        },
+                        "end": {
+                            "line": max(0, issue.range.end.line - 1),
+                            "character": max(0, issue.range.end.character - 1),
+                        },
+                    },
+                    "severity": issue.severity.diag_severity(),
+                    "code": issue.rule.rule_id,
+                    "source": "robocop",
+                    "message": issue.message,
+                    "codeDescription": {"href": f"{issue.rule.docs_url}"},
+                }
+                diag_issues.append(d)
+
     finally:
         os.chdir(initial_cwd)
     return diag_issues
